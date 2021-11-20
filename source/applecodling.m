@@ -1,9 +1,9 @@
-for c = 1:6
-    img_filename = strcat(strcat('ac-', int2str(c)), '.jpg');
-    %img_filename = strcat(int2str(c), '.jpg');
+for c = 1:5
+    img_filename = strcat(strcat('ac-s-', int2str(c)), '.jpg');
     img_original = imread(img_filename);
     img_bw = rgb2gray(img_original);
     
+    % Gray level slicing
     k=double(img_bw);
     [row,col]=size(k);
     T1=0;
@@ -18,6 +18,7 @@ for c = 1:6
         end
     end
     
+    %Add roberts filter, increase sensitivity by 0.07
     [edges, thresh] = edge(img_bw,'Roberts');
     sens = thresh + 0.07;
     imgsep = edge(img_bw,'Roberts', sens);
