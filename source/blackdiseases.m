@@ -1,4 +1,4 @@
-diseases = {'ac-s-','fs-s-'};
+diseases = {'h-s-','ac-s-','fs-s-'};
 pixels = zeros(1,length(diseases));
 disease_name = {};
 last = 1;
@@ -40,7 +40,7 @@ for diseaseno = 1:length(diseases)
             subplot(2,2,3), imshow(imgsep), 
             subplot(2,2,4), imshow(k&imgsep), title(strcat('4-m Pixels = ', int2str(n)));
 
-        %input('Press enter..');
+        input('Press enter..');
         
         last = last + 1;
     end
