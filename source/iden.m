@@ -75,7 +75,7 @@ for diseaseno = 1:length(diseases)
             if (edge_8m < 150)
                 disease = 'No disease';
             else 
-                disease = 'White disease';
+                disease = 'Powdery Mildew';
             end
         end
         
