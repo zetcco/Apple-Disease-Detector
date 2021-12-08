@@ -1,4 +1,4 @@
-diseases = {'h-s-','ac-s-','fs-s-'};
+diseases = {'ac-s-','fs-s-'};
 pixels = zeros(1,length(diseases));
 disease_name = {};
 last = 1;
