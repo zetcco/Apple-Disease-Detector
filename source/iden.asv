@@ -68,28 +68,18 @@ for diseaseno = 1:length(diseases)
         [~,green_8m] = bwlabel(bin_green,8);
         
         % Add roberts filter, increase sensitivity by 0.07
-        % Identificaiton for Powdery Mildew on Blue channel
-        [~, thresh] = edge(img_blue,'Roberts');
+        % Identificaiton for 
+        [edges, thresh] = edge(img_blue,'Roberts');
         sens = thresh + 0.01;
         img_seg = edge(img_blue,'Roberts', sens);
-        [~,edge_8m] = bwlabel(img_seg,8);
-        
-        % Identificaiton for Flyspeck vs Apple Cod
-        [~, thresh] = edge(img_bw,'Roberts');
-        sens = thresh + 0.07;
-        imgsep = edge(img_bw,'Roberts', sens);
-        [~, edge_4m] = bwlabel(bin_black_disease&imgsep, 4);
+        [L,edge_8m] = bwlabel(img_seg,8);
         
         bin_apple = imfill(bin_apple,'holes');
         apple_area = sum(bin_apple(:))/255;
         
         black_disease_ratio = disease_area/apple_area;
         if (black_disease_ratio > 0.008)
-            if (edge_4m > 50)
-                disease = 'Fly Speck';
-            else 
-                disease = 'Apple Cod';
-            end
+            disease = 'Black disease';
         else
             if (edge_8m < 150)
                 disease = 'No disease';
