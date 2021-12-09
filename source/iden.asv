@@ -6,28 +6,34 @@ for diseaseno = 1:length(diseases)
     for c = 1:5
         img_filename = strcat(strcat(diseases{diseaseno}, int2str(c)), '.jpg');
         img_original = imread(img_filename);
+        
+        % Seperate the original image to seperate channels
         img_bw = rgb2gray(img_original);
         img_red = img_original(:,:,1);
         img_green = img_original(:,:,2);
         img_blue = img_original(:,:,3);
         
-        % Gray level slicing
-        bin_red = double(img_red);
-        bin_green = double(img_green);
-        bin_blue = double(img_blue);
-        bin_apple = double(img_green);
-        bin_black_disease=double(img_bw);
-        [row,col]=size(bin_red);
-        red_l1=0;
-        red_l2=90;
-        green_l1=150;
-        green_l2=250;
-        blue_l1=0;
-        blue_l2=0;
-        black_disease_l1 = 0;
-        black_disease_l2 = 100;
-        disease_area = 0;
-        apple_area = 0;
+        % Grey level slicing to detect spots
+        red_l1=0;               % Red channel lower bound
+        red_l2=90;              % Red channel upper bound
+        green_l1=150;           % Green channel lower bound
+        green_l2=250;           % Green channel upper bound
+        blue_l1=0;              % Blue channel lower bound
+        blue_l2=0;              % Blue channel upper bound
+        black_disease_l1 = 0;   % Greyscale from all channels lower bound
+        black_disease_l2 = 100; % Greyscale from all channels upper bound
+        
+        % Areas of Diseased and full apple area
+        disease_area = 0;   % Diseased area pixels
+        apple_area = 0;     % Full apple area pixels ( = All pixels - Background white pixels)
+        
+        [row,col]=size(img_bw);
+        % Convert image to greyscale images from the 3 channels
+        bin_red = zeros(row,col);           % Allocation fo
+        bin_green = zeros(row,col);         % Greyscale using only Green channel
+        bin_blue = zeros(row,col);          % Greyscale using only Blue channel
+        bin_black_disease=zeros(row,col);
+        bin_apple = bin_green;              % Greyscale using only Green channel
         for x=1:row            
             for y=1:col        
                 if((img_red(x,y)>red_l1) && (img_red(x,y)<red_l2))
@@ -68,18 +74,28 @@ for diseaseno = 1:length(diseases)
         [~,green_8m] = bwlabel(bin_green,8);
         
         % Add roberts filter, increase sensitivity by 0.07
-        % Identificaiton for 
-        [edges, thresh] = edge(img_blue,'Roberts');
+        % Identificaiton for Powdery Mildew on Blue channel
+        [~, thresh] = edge(img_blue,'Roberts');
         sens = thresh + 0.01;
         img_seg = edge(img_blue,'Roberts', sens);
-        [L,edge_8m] = bwlabel(img_seg,8);
+        [~,edge_8m] = bwlabel(img_seg,8);
+        
+        % Identificaiton for Flyspeck vs Apple Cod
+        [~, thresh] = edge(img_bw,'Roberts');
+        sens = thresh + 0.07;
+        imgsep = edge(img_bw,'Roberts', sens);
+        [~, edge_4m] = bwlabel(bin_black_disease&imgsep, 4);
         
         bin_apple = imfill(bin_apple,'holes');
         apple_area = sum(bin_apple(:))/255;
         
         black_disease_ratio = disease_area/apple_area;
         if (black_disease_ratio > 0.008)
-            disease = 'Black disease';
+            if (edge_4m > 50)
+                disease = 'Fly Speck';
+            else 
+                disease = 'Apple Cod';
+            end
         else
             if (edge_8m < 150)
                 disease = 'No disease';

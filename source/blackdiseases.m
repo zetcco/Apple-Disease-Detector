@@ -9,7 +9,7 @@ for diseaseno = 1:length(diseases)
         img_bw = rgb2gray(img_original);
 
         % Gray level slicing
-        bin_black_disease=double(img_bw);
+        bin_black_disease=img_bw;
         [row,col]=size(bin_black_disease);
         black_disease_l1=0;
         black_disease_l2=100;
