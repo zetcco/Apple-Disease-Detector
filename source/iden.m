@@ -15,8 +15,6 @@ for diseaseno = 1:length(diseases)
         % Grey level slicing to detect spots
         red_l1=0;               % Red channel lower bound
         red_l2=90;              % Red channel upper bound
-        green_l1=150;           % Green channel lower bound
-        green_l2=250;           % Green channel upper bound
         black_disease_l1 = 0;   % Greyscale from all channels lower bound
         black_disease_l2 = 100; % Greyscale from all channels upper bound
         
@@ -31,7 +29,7 @@ for diseaseno = 1:length(diseases)
         bin_green = zeros(row,col);         % Allocation for Green channel's light spots (150 - 250)
         bin_blue = zeros(row,col);          % Greyscale using only Blue channel
         bin_black_disease=zeros(row,col);
-        bin_apple = bin_green;              % Greyscale using only Green channel
+        bin_apple = zeros(row,col);              % Greyscale using only Green channel
         
         for x=1:row            
             for y=1:col        
@@ -40,12 +38,6 @@ for diseaseno = 1:length(diseases)
                     black_disease_area = black_disease_area + 1;
                 else
                     bin_red(x,y)=0;
-                end
-                
-                if((img_green(x,y)>green_l1) && (img_green(x,y)<green_l2))
-                    bin_green(x,y)=255;
-                else
-                    bin_green(x,y)=0;
                 end
                 
                 if((img_green(x,y)>=250) && (img_green(x,y)<=255))
