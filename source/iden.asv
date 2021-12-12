@@ -7,33 +7,34 @@ for diseaseno = 1:length(diseases)
         img_original = imread(img_filename);
         
         % Seperate the original image to seperate channels
-        img_bw      =   rgb2gray(img_original);
-        img_red     =   img_original(:,:,1);
-        img_green   =   img_original(:,:,2);
-        img_blue    =   img_original(:,:,3);
+        img_bw = rgb2gray(img_original);
+        img_red = img_original(:,:,1);
+        img_green = img_original(:,:,2);
+        img_blue = img_original(:,:,3);
         
         % Grey level slicing to detect spots
-        black_area_l1       =   0;      % Lower bound to detect black/dark pixels (To detect black area in the apple) 
-        black_area_l2       =   90;     % Upper bound to detect black/dark pixels (To detect black area in the apple) 
-        black_disease_l1    =   0;      % Lower bound to detect darker spots including less darker spots (To identify between two black diseases)
-        black_disease_l2    =   100;    % Upper bound to detect darker spots including less darker spots (To identify between two black diseases)
-        white_light_l1      =   250;    % Lower bound to detect white/light pixels (To detect the background excluding apple)
-        white_light_l2      =   255;    % Upper bound to detect white/light pixels (To detect the background excluding apple)
-
-        black_disease_area = 0;         % Diseased area pixels
+        red_l1=0;               % Lower bound to detect black/dark pixels (To detect black area in the apple) 
+        red_l2=90;              % Upper bound to detect black/dark pixels (To detect black area in the apple) 
+        black_disease_l1 = 0;   % Lower bound to detect even darker spots (To identify between two black diseases)
+        black_disease_l2 = 100; % 
+        white_light_l1 = 250;   % Lower bound to detect white/light pixels (To detect the background excluding apple)
+        white_light_l2 = 255;   % Upper bound to detect white/light pixels (To detect the background excluding apple)
+        
+        % Areas of Diseased and full apple area
+        black_disease_area = 0;     % Diseased area pixels
         
         % Gets no of rows and columns
-        [row,col] = size(img_bw);
+        [row,col]=size(img_bw);
         
         % Convert image to greyscale images from the 3 channels
-        bin_red             =   zeros(row,col);       % Allocation for Red channel's dark spots (0 - 90)
-        bin_green           =   zeros(row,col);       % Allocation for Green channel's light spots (150 - 250)
-        bin_black_disease   =   zeros(row,col);       % Area of dark/black spots in image
-        bin_apple           =   zeros(row,col);       % Area of the full apple
+        bin_red = zeros(row,col);               % Allocation for Red channel's dark spots (0 - 90)
+        bin_green = zeros(row,col);             % Allocation for Green channel's light spots (150 - 250)
+        bin_black_disease=zeros(row,col);       % Area of dark/black spots in image
+        bin_apple = zeros(row,col);             % Area of the full apple
         
         for x=1:row            
             for y=1:col        
-                if((img_red(x,y)>black_area_l1) && (img_red(x,y)<black_area_l2))
+                if((img_red(x,y)>red_l1) && (img_red(x,y)<red_l2))
                     bin_red(x,y)=255;
                     black_disease_area = black_disease_area + 1;
                 else
