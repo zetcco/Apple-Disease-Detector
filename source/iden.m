@@ -95,15 +95,26 @@ for diseaseno = 1:length(diseases)
         
 
         figure(c), 
-            subplot(2,4,1), imshow(img_original), title(img_filename),
-            subplot(2,4,2), imshow(img_red), title('Red channel'),
-            subplot(2,4,3), imshow(img_green), title('Green channel'),
-            subplot(2,4,4), imshow(img_blue), title('Blue channel'),
-            subplot(2,4,5), imshow(bin_apple), title(disease),
-            subplot(2,4,6), imshow(bin_red), title(strcat('Area = ', int2str(black_disease_area))),
-            subplot(2,4,7), imshow(bin_green),
-            subplot(2,4,8), imshow(img_seg), title(edge_8m);
+            subplot(7,7,22), imshow(img_original), title(img_filename),
+            subplot(7,7,9), imshow(img_bw), title('All Channel'),
+            subplot(7,7,23), imshow(img_red), title('Red channel'),
+            subplot(7,7,37), imshow(img_green), title('Green channel'),
+            subplot(7,7,44), imshow(img_blue), title('Blue channel'),
             
-        input('Press enter..');
+            subplot(7,7,3), imshow(bin_black_disease), title('Grey Level Slicing (0-100)'),
+            subplot(7,7,17), imshow(imgsep), title('Roberts edge detection'),
+            subplot(7,7,24), imshow(bin_red), title('Grey Level Slicing (0-90)'),
+            subplot(7,7,38), imshow(bin_apple), title('Grey Level Slicing (250-255)'),
+            subplot(7,7,45), imshow(img_seg), title('Roberts edge detection'),
+            
+            subplot(7,7,11), imshow(imgsep&bin_black_disease), title(strcat('AND 4m connected = ', int2str(edge_4m))),
+            subplot(7,7,32), imshow(bin_red), title(sprintf('%f',black_disease_area/apple_area)),
+            subplot(7,7,46), imshow(img_seg), title(strcat('8m connected = ', int2str(edge_8m))),
+            
+            subplot(7,7,28), imshow(img_original), title(disease),
+            
+            ;
+            
+        input(disease);
     end
 end
