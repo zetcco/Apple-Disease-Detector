@@ -1,5 +1,9 @@
+% h - Healthy
+% pm - White Diesease Powdery Mildew
+% fs - Black disease, Flyspeck
+% ac - Black diesease, Apple Cod
+
 diseases = {'h-s-','pm-s-','fs-s-','ac-s-'};
-pixels = zeros(1,length(diseases));
 disease_name = {};
 for diseaseno = 1:length(diseases)
     for c = 1:5
@@ -33,20 +37,20 @@ for diseaseno = 1:length(diseases)
         
         for x=1:row            
             for y=1:col        
-                if((img_red(x,y)>black_area_l1) && (img_red(x,y)<black_area_l2))
+                if((img_red(x,y)>black_area_l1) && (img_red(x,y)<black_area_l2)) % 0-90 pixels ( To detect Black/Dark areas in the apple)
                     bin_red(x,y)=255;
                     black_disease_area = black_disease_area + 1;
                 else
                     bin_red(x,y)=0;
                 end
                 
-                if((img_green(x,y)>=white_light_l1) && (img_green(x,y)<=white_light_l2))
+                if((img_green(x,y)>=white_light_l1) && (img_green(x,y)<=white_light_l2)) % 250 - 255  ( To detect get apple area )
                     bin_apple(x,y)=0;
                 else
                     bin_apple(x,y)=255;
                 end
                 
-                if((img_bw(x,y)>black_disease_l1) && (img_bw(x,y)<black_disease_l2))
+                if((img_bw(x,y)>black_disease_l1) && (img_bw(x,y)<black_disease_l2)) % 0 - 100  (To detect Black/Dark with grey colors)
                     bin_black_disease(x,y)=255;
                 else
                     bin_black_disease(x,y)=0;
@@ -55,7 +59,7 @@ for diseaseno = 1:length(diseases)
         end
         
         % Identificaiton for Powdery Mildew on Blue channel using Roberts
-        % edge detection (with additional 0.07 sensitivity)
+        % edge detection (with additional 0.01 sensitivity)
         [~, thresh] = edge(img_blue,'Roberts');
         sens = thresh + 0.01;
         img_seg = edge(img_blue,'Roberts', sens);
@@ -111,9 +115,7 @@ for diseaseno = 1:length(diseases)
             subplot(7,7,32), imshow(bin_red), title(sprintf('%f',black_disease_area/apple_area)),
             subplot(7,7,46), imshow(img_seg), title(strcat('8m connected = ', int2str(edge_8m))),
             
-            subplot(7,7,28), imshow(img_original), title(disease),
-            
-            ;
+            subplot(7,7,28), imshow(img_original), title(disease);
             
         input(disease);
     end
