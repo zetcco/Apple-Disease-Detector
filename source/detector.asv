@@ -1,4 +1,4 @@
-function [disease, black_disease_ratio, edge_4m, edge_8m, img_bw, img_red, img_green, img_blue, bin_red, bin_apple, bin_black_disease, imgsep, img_seg]  = detector(img_filename)
+function [disease, black_disease_ratio, edge_4m, edge_8m]  = detector(img_filename)
         img_original = imread(img_filename);
         
         % Seperate the original image to seperate channels
@@ -32,7 +32,7 @@ function [disease, black_disease_ratio, edge_4m, edge_8m, img_bw, img_red, img_g
         for x=1:row            
             for y=1:col        
                 
-                % Grey level slicing to get the dark area ratio
+                % Grey level slicing to get the dark area raio
                 if((img_red(x,y)>black_area_l1) && (img_red(x,y)<black_area_l2)) % 0-90 pixels ( To detect Black/Dark areas in the apple)
                     bin_red(x,y)=255;
                     black_disease_area = black_disease_area + 1;
@@ -40,15 +40,12 @@ function [disease, black_disease_ratio, edge_4m, edge_8m, img_bw, img_red, img_g
                     bin_red(x,y)=0;
                 end
                 
-                % Grey level slicing to get the area of the apple
                 if((img_green(x,y)>=white_light_l1) && (img_green(x,y)<=white_light_l2)) % 250 - 255  ( To detect get apple area )
                     bin_apple(x,y)=0;
                 else
                     bin_apple(x,y)=255;
                 end
                 
-                % Grey level slicing to detect dark spots, used to identify
-                % between the two black diseases.
                 if((img_bw(x,y)>black_disease_l1) && (img_bw(x,y)<black_disease_l2)) % 0 - 100  (To detect Black/Dark with grey colors)
                     bin_black_disease(x,y)=255;
                 else
@@ -56,15 +53,7 @@ function [disease, black_disease_ratio, edge_4m, edge_8m, img_bw, img_red, img_g
                 end
             end
         end
-          
-        % Identificaiton for Flyspeck vs Apple Cod (between Black diseases)
-        [~, thresh] = edge(img_bw,'Roberts');
-        sens = thresh + 0.07;
-        imgsep = edge(img_bw,'Roberts', sens);
         
-        % Logical AND operation to find common pixels in dark diseased.
-        intersection = bin_black_disease&imgsep;
-        [~, edge_4m] = bwlabel(intersection, 4);
         
         % Identificaiton for Powdery Mildew on Blue channel using Roberts
         % edge detection (with additional 0.01 sensitivity)
@@ -72,6 +61,13 @@ function [disease, black_disease_ratio, edge_4m, edge_8m, img_bw, img_red, img_g
         sens = thresh + 0.01;
         img_seg = edge(img_blue,'Roberts', sens);
         [~,edge_8m] = bwlabel(img_seg,8);
+        
+        
+        % Identificaiton for Flyspeck vs Apple Cod (between Black diseases)
+        [~, thresh] = edge(img_bw,'Roberts');
+        sens = thresh + 0.07;
+        imgsep = edge(img_bw,'Roberts', sens);
+        [~, edge_4m] = bwlabel(bin_black_disease&imgsep, 4);
         
         % Fill holes inside apple if there are, then sum all white pixels
         % and then divide by 255 to get count of White pixels effectively
