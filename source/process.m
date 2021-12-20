@@ -84,7 +84,7 @@ function pushbutton1_Callback(hObject, eventdata, handles)
     imshow(img_red,'Parent', handles.axes4);
     imshow(bin_apple,'Parent', handles.axes8);
     imshow(bin_red,'Parent', handles.axes9);
-    imshow(img_bw,'Parent', handles.axes2);
+    imshow(img_red,'Parent', handles.axes2);
     imshow(img_blue,'Parent', handles.axes5);
     imshow(imgsep,'Parent', handles.axes7);
     imshow(bin_black_disease,'Parent', handles.axes6);

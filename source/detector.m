@@ -1,5 +1,6 @@
 function [disease, black_disease_ratio, edge_4m, edge_8m, img_bw, img_red, img_green, img_blue, bin_red, bin_apple, bin_black_disease, imgsep, img_seg]  = detector(img_filename)
         img_original = imread(img_filename);
+        img_original = imresize(img_original, [250 250], 'nearest');
         
         % Seperate the original image to seperate channels
         img_bw      =   rgb2gray(img_original);
@@ -49,7 +50,7 @@ function [disease, black_disease_ratio, edge_4m, edge_8m, img_bw, img_red, img_g
                 
                 % Grey level slicing to detect dark spots, used to identify
                 % between the two black diseases.
-                if((img_bw(x,y)>black_disease_l1) && (img_bw(x,y)<black_disease_l2)) % 0 - 100  (To detect Black/Dark with grey colors)
+                if((img_red(x,y)>black_disease_l1) && (img_red(x,y)<black_disease_l2)) % 0 - 100  (To detect Black/Dark with grey colors)
                     bin_black_disease(x,y)=255;
                 else
                     bin_black_disease(x,y)=0;
@@ -58,9 +59,9 @@ function [disease, black_disease_ratio, edge_4m, edge_8m, img_bw, img_red, img_g
         end
           
         % Identificaiton for Flyspeck vs Apple Cod (between Black diseases)
-        [~, thresh] = edge(img_bw,'Roberts');
+        [~, thresh] = edge(img_red,'Roberts');
         sens = thresh + 0.07;
-        imgsep = edge(img_bw,'Roberts', sens);
+        imgsep = edge(img_red,'Roberts', sens);
         
         % Logical AND operation to find common pixels in dark diseased.
         intersection = bin_black_disease&imgsep;
@@ -83,14 +84,14 @@ function [disease, black_disease_ratio, edge_4m, edge_8m, img_bw, img_red, img_g
         black_disease_ratio = black_disease_area/apple_area;
         
         % Grouping them to disease
-        if (black_disease_ratio > 0.007)
-            if (edge_4m > 50)
+        if (black_disease_ratio > 0.006176217)
+            if (edge_4m > 47)
                 disease = 'Fly Speck';
             else 
                 disease = 'Apple Cod';
             end
         else
-            if (edge_8m < 150)
+            if (edge_8m < 280)
                 disease = 'No disease';
             else 
                 disease = 'Powdery Mildew';
